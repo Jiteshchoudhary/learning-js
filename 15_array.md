@@ -127,3 +127,4 @@ array.toSorted(compareFn);
 - `toSorted()` returns a new, sorted array without modifying the original.
 - It can be used on non-array objects with a `length` property and integer-keyed properties.
 - It handles sparse arrays by treating empty slots as `undefined`.
+

@@ -19,6 +19,7 @@ This tutorial covers the visibility and accessibility of variables in JavaScript
      ```javascript
      var message = 'Hi';
 
+
      function say() {
          var message = 'Hello';
          console.log(message); // Outputs: Hello
