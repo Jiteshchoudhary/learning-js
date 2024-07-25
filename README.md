@@ -2214,3 +2214,1371 @@ array.concat([value1[, value2[, ...]]])
 - The `concat()` method merges arrays and returns a new array, leaving the original arrays unchanged.
 - It can concatenate multiple arrays and non-array values.
 - In ES6, the spread operator (`...`) offers a modern alternative for merging arrays.
+
+## array creation array.of() and array.from()
+### Summary: JavaScript `Array.of()` Method
+
+**Introduction:**
+The `Array.of()` method in ES6 provides a more intuitive way to create arrays compared to the ES5 Array constructor, avoiding the pitfalls of the latter's behavior when handling numeric arguments.
+
+**Key Points:**
+
+- **ES5 Array Constructor Issues:**
+  - When passed a single number, it creates an array with that length:
+    ```javascript
+    let numbers = new Array(2);
+    console.log(numbers.length); // 2
+    console.log(numbers[0]); // undefined
+    ```
+  - When passed a non-number, it creates an array with that element:
+    ```javascript
+    numbers = new Array("2");
+    console.log(numbers.length); // 1
+    console.log(numbers[0]); // "2"
+    ```
+
+- **Solution with `Array.of()`:**
+  - `Array.of()` does not treat a single numeric value specially and always creates an array containing the values passed to it:
+    ```javascript
+    let numbers = Array.of(3);
+    console.log(numbers.length); // 1
+    console.log(numbers[0]); // 3
+    ```
+
+- **Examples:**
+  - Single numeric value:
+    ```javascript
+    let numbers = Array.of(3);
+    console.log(numbers.length); // 1
+    console.log(numbers[0]); // 3
+    ```
+  - Multiple values:
+    ```javascript
+    let chars = Array.of('A', 'B', 'C');
+    console.log(chars.length); // 3
+    console.log(chars); // ['A','B','C']
+    ```
+
+- **Polyfill for Unsupported Environments:**
+  ```javascript
+  if (!Array.of) {
+      Array.of = function() {
+          return Array.prototype.slice.call(arguments);
+      };
+  }
+  ```
+
+**Conclusion:**
+The `Array.of()` method simplifies array construction by consistently treating all arguments as elements of the new array, regardless of their type or quantity.
+
+
+### Summary: JavaScript `Array.from()` Method
+
+**Introduction:**
+The `Array.from()` method in ES6 allows you to create a new array from an array-like or iterable object, providing a more straightforward approach compared to ES5 methods.
+
+**Key Points:**
+
+- **ES5 Approach:**
+  - Manually iterate over elements to convert an array-like object to an array:
+    ```javascript
+    function arrayFromArgs() {
+        var results = [];
+        for (var i = 0; i < arguments.length; i++) {
+            results.push(arguments[i]);
+        }
+        return results;
+    }
+    var fruits = arrayFromArgs('Apple', 'Orange', 'Banana');
+    console.log(fruits); // Output: [ 'Apple', 'Orange', 'Banana' ]
+    ```
+
+  - Using `Array.prototype.slice` for conciseness:
+    ```javascript
+    function arrayFromArgs() {
+        return Array.prototype.slice.call(arguments);
+    }
+    var fruits = arrayFromArgs('Apple', 'Orange', 'Banana');
+    console.log(fruits); // Output: [ 'Apple', 'Orange', 'Banana' ]
+    ```
+
+- **ES6 `Array.from()` Method:**
+  - Creates a new array from an array-like or iterable object:
+    ```javascript
+    Array.from(target[, mapFn[, thisArg]])
+    ```
+    - `target`: The array-like or iterable object to convert.
+    - `mapFn`: Optional map function to call on every element.
+    - `thisArg`: Optional value to use as `this` when executing `mapFn`.
+
+- **Examples:**
+
+  1. **Create an array from an array-like object:**
+     ```javascript
+     function arrayFromArgs() {
+         return Array.from(arguments);
+     }
+     console.log(arrayFromArgs(1, 'A')); // Output: [ 1, 'A' ]
+     ```
+
+  2. **Using a mapping function:**
+     ```javascript
+     function addOne() {
+         return Array.from(arguments, x => x + 1);
+     }
+     console.log(addOne(1, 2, 3)); // Output: [ 2, 3, 4 ]
+     ```
+
+  3. **Using a `this` value:**
+     ```javascript
+     let doubler = {
+         factor: 2,
+         double(x) {
+             return x * this.factor;
+         }
+     };
+     let scores = [5, 6, 7];
+     let newScores = Array.from(scores, doubler.double, doubler);
+     console.log(newScores); // Output: [ 10, 12, 14 ]
+     ```
+
+  4. **Create an array from an iterable object:**
+     ```javascript
+     let even = {
+         *[Symbol.iterator]() {
+             for (let i = 0; i < 10; i += 2) {
+                 yield i;
+             }
+         }
+     };
+     let evenNumbers = Array.from(even);
+     console.log(evenNumbers); // Output: [ 0, 2, 4, 6, 8 ]
+     ```
+
+**Conclusion:**
+The `Array.from()` method simplifies the creation of arrays from array-like or iterable objects, offering additional functionality such as mapping and context binding.
+
+### Summary: JavaScript `Array.flat()` Method
+
+**Introduction:**
+The `Array.prototype.flat()` method, introduced in ES2019, creates a new array with all sub-array elements concatenated into it recursively up to a specified depth.
+
+**Key Points:**
+
+- **Syntax:**
+  ```javascript
+  let newArray = arrayObject.flat([depth])
+  ```
+  - `depth`: The depth level specifying how deep a nested array structure should be flattened. Defaults to 1.
+
+- **Basic Usage:**
+  - Flattens an array one level deep by default:
+    ```javascript
+    const numbers = [1, 2, [3, 4, 5]];
+    const flatNumbers = numbers.flat();
+    console.log(flatNumbers); // Output: [1, 2, 3, 4, 5]
+    ```
+
+- **Effect on Original Array:**
+  - The original array remains unchanged:
+    ```javascript
+    console.log(numbers); // Output: [1, 2, [3, 4, 5]]
+    ```
+
+- **Specifying Depth:**
+  - Flattening an array with a depth of 2:
+    ```javascript
+    const numbers = [1, 2, [3, 4, 5, [6, 7]]];
+    const flatNumbers = numbers.flat(2);
+    console.log(flatNumbers); // Output: [1, 2, 3, 4, 5, 6, 7]
+    ```
+
+  - Using `Infinity` to flatten an array of unknown depth:
+    ```javascript
+    const numbers = [1, 2, [3, 4, 5, [6, 7, [8, 9]]]];
+    const flatNumbers = numbers.flat(Infinity);
+    console.log(flatNumbers); // Output: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    ```
+
+- **Removing Empty Slots:**
+  - The `flat()` method also removes holes in arrays:
+    ```javascript
+    const numbers = [1, 2, , 4, , 5];
+    const sequence = numbers.flat();
+    console.log(sequence); // Output: [1, 2, 4, 5]
+    ```
+
+**Conclusion:**
+The `Array.prototype.flat()` method is used to flatten arrays with nested arrays. You can specify the depth level for flattening, which defaults to 1, and it also removes empty slots in arrays.
+
+
+### Summary: JavaScript `Array.flatMap()` Method
+
+**Introduction:**
+The `flatMap()` method combines the functionalities of `map()` and `flat()` (with a depth of 1). It maps each element in an array using a mapping function and then flattens the result into a new array.
+
+**Key Points:**
+
+- **Syntax:**
+  ```javascript
+  let newArray = arrayObject.flatMap(callback, thisArg);
+  ```
+  - `callback`: The mapping function, similar to the one used in `map()`.
+  - `thisArg`: Optional value to use as `this` when executing the callback.
+
+- **Mapping Function Syntax:**
+  ```javascript
+  function callback(currentValue[, index, array]) { /* ... */ }
+  ```
+
+- **Behavior:**
+  - `flatMap()` does not modify the original array.
+
+**Examples:**
+
+1. **Creating Words from Sentences:**
+   - Using `map()`:
+     ```javascript
+     let sentences = ["JavaScript Array flatMap()", " ", "is", " ", "Awesome"];
+     let words = sentences.map(s => s.split(' '));
+     console.log(words);
+     // Output: [ ['JavaScript', 'Array', 'flatMap()'], [' '], ['is'], [' '], ['Awesome'] ]
+     ```
+
+   - Using `flatMap()`:
+     ```javascript
+     let words = sentences.flatMap(s => s.split(' '));
+     console.log(words);
+     // Output: [ 'JavaScript', 'Array', 'flatMap()', '', '', 'is', '', '', 'Awesome' ]
+     ```
+
+2. **Adding and Removing Elements During Mapping:**
+   - Shopping cart example:
+     ```javascript
+     let cart = [
+         { name: 'Smartphone', qty: 2, price: 500, freeOfCharge: false },
+         { name: 'Tablet', qty: 1, price: 800, freeOfCharge: false }
+     ];
+
+     let newCart = cart.flatMap(item => {
+         if (item.name === 'Smartphone') {
+             return [item, { name: 'Screen Protector', qty: item.qty, price: 5, freeOfCharge: true }];
+         } else {
+             return [item];
+         }
+     });
+
+     console.log(newCart);
+     // Output: [
+     //   { name: 'Smartphone', qty: 2, price: 500, freeOfCharge: false },
+     //   { name: 'Screen Protector', qty: 2, price: 5, freeOfCharge: true },
+     //   { name: 'Tablet', qty: 1, price: 800, freeOfCharge: false }
+     // ]
+
+     const total = newCart.reduce((sum, item) => {
+         if (!item.freeOfCharge) sum += item.price * item.qty;
+         return sum;
+     }, 0);
+
+     console.log({ total }); // Output: { total: 1800 }
+     ```
+
+**Conclusion:**
+The `flatMap()` method is useful for creating a flattened array by mapping each element and then flattening the results. It simplifies operations where both mapping and flattening are needed, allowing for concise and readable code.
+
+
+### Summary: JavaScript `Array.join()` Method
+
+**Introduction:**
+The `join()` method concatenates all elements of an array into a single string, separated by a specified separator.
+
+**Syntax:**
+```javascript
+Array.prototype.join([separator])
+```
+- **separator**: An optional string to separate each pair of adjacent elements. Defaults to a comma (`,`) if not provided.
+
+**Behavior:**
+- If the array has one element, `join()` returns that element as a string without using the separator.
+- If the array is empty, `join()` returns an empty string.
+- Non-string elements are converted to strings before joining.
+- `undefined`, `null`, and empty array elements are converted to an empty string.
+
+**Examples:**
+
+1. **Joining CSS Classes:**
+   ```javascript
+   const cssClasses = ['btn', 'btn-primary', 'btn-active'];
+   const btnClass = cssClasses.join(' ');
+   console.log(btnClass); // Output: "btn btn-primary btn-active"
+   ```
+
+2. **Replacing All Occurrences of a String:**
+   ```javascript
+   const title = 'JavaScript array join example';
+   const url = title.split(' ').join('-').toLowerCase();
+   console.log(url); // Output: "javascript-array-join-example"
+   ```
+
+   **Steps:**
+   1. Split the title string by spaces into an array using `split()`.
+   2. Join all elements of the array into a string with hyphens (`-`) using `join()`.
+   3. Convert the resulting string to lowercase using `toLowerCase()`.
+
+**Conclusion:**
+The `join()` method is used to concatenate array elements into a single string with a specified separator, providing flexibility in formatting and transforming arrays into strings.
+
+### Summary: ES6 Destructuring Assignment
+
+**Introduction:**
+ES6 introduced the destructuring assignment, which allows you to unpack properties from objects or elements from arrays into distinct variables.
+
+**Array Destructuring:**
+- Example function returning an array:
+  ```javascript
+  function getScores() {
+     return [70, 80, 90];
+  }
+  ```
+- Assigning array elements to variables pre-ES6:
+  ```javascript
+  let scores = getScores();
+  let x = scores[0], y = scores[1], z = scores[2];
+  ```
+
+- Using ES6 destructuring:
+  ```javascript
+  let [x, y, z] = getScores();
+  console.log(x); // 70
+  console.log(y); // 80
+  console.log(z); // 90
+  ```
+
+- Handling arrays with fewer elements:
+  ```javascript
+  function getScores() {
+     return [70, 80];
+  }
+  let [x, y, z] = getScores();
+  console.log(z); // undefined
+  ```
+
+- Discarding extra elements:
+  ```javascript
+  function getScores() {
+     return [70, 80, 90, 100];
+  }
+  let [x, y, z] = getScores();
+  ```
+
+**Rest Syntax:**
+- Capturing remaining elements:
+  ```javascript
+  let [x, y, ...args] = getScores();
+  console.log(args); // [90, 100]
+  ```
+
+**Separate Assignment:**
+- Destructuring separate from declaration:
+  ```javascript
+  let a, b;
+  [a, b] = [10, 20];
+  console.log(a); // 10
+  console.log(b); // 20
+  ```
+
+**Default Values:**
+- Setting default values:
+  ```javascript
+  function getItems() {
+      return [10, 20];
+  }
+  let [, , thirdItem = 0] = getItems();
+  console.log(thirdItem); // 0
+  ```
+
+- Handling undefined elements:
+  ```javascript
+  let a, b;
+  [a = 1, b = 2] = [10];
+  console.log(a); // 10
+  console.log(b); // 2
+  ```
+
+- Handling non-iterable return values:
+  ```javascript
+  function getItems() {
+      return null;
+  }
+  let [a = 10, b = 20] = getItems() || [];
+  console.log(a); // 10
+  console.log(b); // 20
+  ```
+
+**Nested Array Destructuring:**
+- Destructuring nested arrays:
+  ```javascript
+  function getProfile() {
+      return ['John', 'Doe', ['Red', 'Green', 'Blue']];
+  }
+  let [firstName, lastName, [color1, color2, color3]] = getProfile();
+  console.log(color1, color2, color3); // Red Green Blue
+  ```
+
+**Applications:**
+1. **Swapping Variables:**
+   ```javascript
+   let a = 10, b = 20;
+   [a, b] = [b, a];
+   console.log(a); // 20
+   console.log(b); // 10
+   ```
+
+2. **Functions Returning Multiple Values:**
+   ```javascript
+   function stat(a, b) {
+       return [a + b, (a + b) / 2, a - b];
+   }
+   let [sum, average, difference] = stat(20, 10);
+   console.log(sum, average, difference); // 30, 15, 10
+   ```
+
+**Conclusion:**
+The ES6 destructuring assignment simplifies extracting array elements into individual variables, supports default values, handles nested arrays, and enables practical applications like variable swapping and handling functions returning multiple values.
+
+
+### Summary: JavaScript Spread Operator
+
+**Introduction:**
+The JavaScript spread operator, represented by three dots (`...`), allows you to spread elements of an iterable object like an array, map, or set into a new array or function arguments.
+
+**Key Concepts:**
+- **Spread Operator Usage:**
+  - Example: 
+    ```javascript
+    const odd = [1, 3, 5];
+    const combined = [2, 4, 6, ...odd];
+    console.log(combined); // [2, 4, 6, 1, 3, 5]
+    ```
+  - Unpacks elements of an iterable object.
+  - Differs from the rest parameter, which packs elements into an array.
+
+- **Spread Operator vs. Rest Parameter:**
+  - **Spread Operator:** Unpacks elements.
+  - **Rest Parameter:** Packs elements into an array.
+
+- **Examples:**
+  - Adding elements anywhere:
+    ```javascript
+    const odd = [1, 3, 5];
+    const combined = [...odd, 2, 4, 6];
+    console.log(combined); // [1, 3, 5, 2, 4, 6]
+    ```
+
+  - **Object Spread (ES2018):**
+    ```javascript
+    const obj1 = { a: 1, b: 2 };
+    const obj2 = { ...obj1, c: 3 };
+    console.log(obj2); // { a: 1, b: 2, c: 3 }
+    ```
+
+**Applications:**
+1. **Using Spread with Functions:**
+   - Replacing `apply()`:
+     ```javascript
+     function compare(a, b) {
+         return a - b;
+     }
+     let result = compare(...[1, 2]);
+     console.log(result); // -1
+     ```
+
+2. **Array Manipulation:**
+   - **Constructing Array Literals:**
+     ```javascript
+     let initialChars = ['A', 'B'];
+     let chars = [...initialChars, 'C', 'D'];
+     console.log(chars); // ["A", "B", "C", "D"]
+     ```
+
+   - **Concatenating Arrays:**
+     ```javascript
+     let numbers = [1, 2];
+     let moreNumbers = [3, 4];
+     let allNumbers = [...numbers, ...moreNumbers];
+     console.log(allNumbers); // [1, 2, 3, 4]
+     ```
+
+   - **Copying Arrays:**
+     ```javascript
+     let scores = [80, 70, 90];
+     let copiedScores = [...scores];
+     console.log(copiedScores); // [80, 70, 90]
+     ```
+
+3. **Spread Operator with Strings:**
+   - Example:
+     ```javascript
+     let chars = ['A', ...'BC', 'D'];
+     console.log(chars); // ["A", "B", "C", "D"]
+     ```
+
+**Summary:**
+- The spread operator (`...`) unpacks elements of iterable objects into a list.
+- It can be used to clone, merge, or concatenate arrays, and to pass array elements as function arguments.
+- The rest parameter also uses `...` but packs elements into an array.
+
+### JavaScript String Methods
+
+**This guide provides methods for effective string manipulation in JavaScript:**
+
+**1. Searching:**
+- **`search()`** – Locate a substring using a regular expression.
+- **`indexOf()`** – Get the index of the first occurrence of a substring.
+- **`lastIndexOf()`** – Find the index of the last occurrence of a substring.
+- **`includes()`** – Check if a string contains a substring.
+- **`startsWith()`** – Check if a string starts with another string.
+- **`endsWith()`** – Determine if a string ends with another string.
+
+**2. Trimming:**
+- **`trim()`** – Remove whitespace from both ends of a string.
+- **`trimStart()`** – Remove leading whitespace.
+- **`trimEnd()`** – Remove trailing whitespace.
+
+**3. Padding:**
+- **`padStart()`** – Pad a string from the start.
+- **`padEnd()`** – Pad a string from the end.
+
+**4. Extracting:**
+- **`split()`** – Split a string into an array of substrings.
+- **`substring()`** – Extract a substring between specified indices.
+- **`slice()`** – Extract a part of a string based on start and end indices.
+
+**5. Concatenating & Interpolating:**
+- **`concat()`** – Concatenate multiple strings into a new string.
+- **Template literals** – Substitute variables in a string.
+
+**6. Replacing:**
+- **`replace()`** – Replace a substring with a new one.
+- **`replaceAll()`** – Replace all occurrences of a substring that matches a pattern.
+
+**7. Changing Cases:**
+- **`toUpperCase()`** – Convert all characters to uppercase.
+- **`toLowerCase()`** – Convert all characters to lowercase.
+
+### JavaScript String search()
+
+**Summary:** This tutorial explains how to use the JavaScript `String.search()` function to locate a substring within a string using a regular expression.
+
+**Introduction to the `search()` function:**
+- The `search()` method takes a regular expression and returns the index of the first match in a string.
+  
+  **Syntax:**
+  ```javascript
+  let index = str.search(regexp);
+  ```
+  - `regexp`: A regular expression. If a non-RegExp is passed, it converts that value to a RegExp.
+  - Returns `-1` if no match is found.
+
+**Examples:**
+1. **Finding the first capital letter:**
+    ```javascript
+    let re = /[A-Z]/;
+    let str = 'hi There! How are you?';
+    let index = str.search(re);
+    console.log(index); // Output: 3
+    ```
+    - This returns `3`, which is the index of the capital letter "T".
+
+2. **Finding a number in the string:**
+    ```javascript
+    let re = /[0-9]/;
+    let str = 'Hello, JavaScript!';
+    let index = str.search(re);
+    console.log(index); // Output: -1
+    ```
+    - This returns `-1` because there is no number in the string.
+
+**Summary:**
+Use the JavaScript `String.search()` method to find the index of the first match in a string based on a regular expression. If no match is found, it returns `-1`.
+
+
+### JavaScript String `indexOf()` Summary
+
+The `indexOf()` method in JavaScript is used to find the index of the first occurrence of a substring within a string. If the substring is not found, it returns -1.
+
+**Syntax**:
+```javascript
+let index = str.indexOf(substr, [, fromIndex]);
+```
+- `substr`: The substring to search for.
+- `fromIndex` (optional): The position to start the search. Defaults to 0.
+
+**Characteristics**:
+- The search is case-sensitive.
+- To find the last occurrence of a substring, use the `lastIndexOf()` method.
+
+**Examples**:
+
+1. **Finding the first occurrence of a substring**:
+    ```javascript
+    let str = 'finding substring in string';
+    let index = str.indexOf('str');
+    console.log(index); // Output: 11
+    ```
+
+2. **Counting occurrences of a substring**:
+    ```javascript
+    let str = 'You do not know what you do not know until you know.';
+    let substr = 'know';
+
+    let count = 0;
+    let index = str.indexOf(substr);
+    while (index !== -1) {
+        count++;
+        index = str.indexOf(substr, index + 1);
+    }
+
+    console.log(count); // Output: 3
+    ```
+
+3. **Case sensitivity**:
+    ```javascript
+    let str = 'JS indexOf';
+    let substr = 'js';
+    let index = str.indexOf(substr);
+    console.log(index); // Output: -1
+    ```
+
+    **Case-insensitive search**:
+    ```javascript
+    let str = 'JS indexOf';
+    let substr = 'js';
+    let index = str.toLowerCase().indexOf(substr.toLowerCase());
+    console.log(index); // Output: 0
+    ```
+
+**Summary**:
+- `indexOf()` returns the index of the first occurrence of a substring in a string or -1 if not found.
+- The search is case-sensitive. For a case-insensitive search, convert both the string and the substring to lowercase.
+
+### JavaScript String `lastIndexOf()` Summary
+
+The `lastIndexOf()` method in JavaScript is used to find the last occurrence of a substring within a string, searching backwards from a specified index or from the end of the string if no index is provided. If the substring is not found, it returns -1.
+
+**Syntax**:
+```javascript
+str.lastIndexOf(substr, [, fromIndex]);
+```
+- `substr`: The substring to search for.
+- `fromIndex` (optional): The position to start the search backwards. Defaults to +Infinity.
+
+**Characteristics**:
+- The search starts from the `fromIndex` and moves backward.
+- If `fromIndex` is not provided, the search starts from the end of the string.
+- If `fromIndex` is greater than or equal to `str.length`, the entire string is searched.
+- If `fromIndex` is less than zero, it behaves as if `fromIndex` is zero.
+- The search is case-sensitive.
+
+**Examples**:
+
+1. **Finding the last occurrence of a substring**:
+    ```javascript
+    let str = 'JavaScript';
+    let index = str.lastIndexOf('a');
+    console.log(index); // Output: 3
+    ```
+
+2. **Using `fromIndex` to start the search**:
+    ```javascript
+    let str = 'JavaScript';
+    let index = str.lastIndexOf('a', 2);
+    console.log(index); // Output: 1
+    ```
+
+3. **Case sensitivity**:
+    ```javascript
+    let str = 'Hello, World!';
+    let substr = 'L';
+    let index = str.lastIndexOf(substr);
+    console.log(index); // Output: -1
+    ```
+
+    **Case-insensitive search**:
+    ```javascript
+    let str = 'Hello, World!';
+    let substr = 'L';
+    let index = str.toLowerCase().lastIndexOf(substr.toLowerCase());
+    console.log(index); // Output: 10
+    ```
+
+**Summary**:
+- `lastIndexOf()` returns the index of the last occurrence of a substring in a string or -1 if not found.
+- The search is case-sensitive and searches backward from the end of the string or from the specified `fromIndex`. For a case-insensitive search, convert both the string and substring to lowercase before using `lastIndexOf()`.
+
+### JavaScript String `includes()` Method Summary
+
+The `includes()` method in JavaScript checks if one string contains another string, returning `true` if found and `false` otherwise.
+
+**Syntax**:
+```javascript
+string.includes(searchString [, position])
+```
+- `searchString`: The string to search for.
+- `position` (optional): The position to start searching from. Defaults to 0.
+
+**Characteristics**:
+- The search is case-sensitive.
+
+**Examples**:
+
+1. **Basic usage**:
+    ```javascript
+    let email = 'admin@example.com';
+    console.log(email.includes('@')); // Output: true
+    ```
+
+2. **Case-sensitive search**:
+    ```javascript
+    let str = 'JavaScript String';
+    console.log(str.includes('Script')); // Output: true
+    console.log(str.includes('script')); // Output: false
+    ```
+
+3. **Using the position parameter**:
+    ```javascript
+    let str = 'JavaScript String';
+    console.log(str.includes('Script', 5)); // Output: false
+    ```
+
+**Summary**:
+- The `includes()` method checks if a string contains another string, returning `true` or `false`.
+- It is case-sensitive and can start the search from a specified position.
+
+
+
+### JavaScript String `startsWith()` Method Summary
+
+The `startsWith()` method checks if a string begins with a specified substring, returning `true` if it does and `false` otherwise.
+
+**Syntax**:
+```javascript
+string.startsWith(searchString [, position])
+```
+- `searchString`: The substring to check for at the start of the string.
+- `position` (optional): The position within the string to start the search. Defaults to 0.
+
+**Characteristics**:
+- The search is case-sensitive.
+
+**Examples**:
+
+1. **Basic usage**:
+    ```javascript
+    const title = 'Jack and Jill Went Up the Hill';
+    console.log(title.startsWith('Jack')); // Output: true
+    ```
+
+2. **Case sensitivity**:
+    ```javascript
+    console.log(title.startsWith('jack')); // Output: false
+    ```
+
+3. **Using the position parameter**:
+    ```javascript
+    console.log(title.startsWith('Jill', 9)); // Output: true
+    ```
+
+**Summary**:
+- `startsWith()` is used to check if a string starts with a specific substring, with an optional starting position for the search. The method is case-sensitive.
+
+
+### JavaScript String `endsWith()` Method Summary
+
+The `endsWith()` method checks if a string ends with a specified substring, returning `true` if it does and `false` otherwise.
+
+**Syntax**:
+```javascript
+string.endsWith(searchString [, length])
+```
+- `searchString`: The substring to check for at the end of the string.
+- `length` (optional): The length of the string to consider for the check. Defaults to the full length of the string.
+
+**Characteristics**:
+- The search is case-sensitive.
+
+**Examples**:
+
+1. **Basic usage**:
+    ```javascript
+    const title = 'Jack and Jill Went Up the Hill';
+    console.log(title.endsWith('Hill')); // Output: true
+    ```
+
+2. **Case sensitivity**:
+    ```javascript
+    console.log(title.endsWith('hill')); // Output: false
+    ```
+
+3. **Using the length parameter**:
+    ```javascript
+    console.log(title.endsWith('Up', 21)); // Output: true
+    ```
+
+**Summary**:
+- `endsWith()` is used to check if a string ends with a specific substring, with an optional length parameter to specify the length of the string to be checked. The method is case-sensitive.
+
+
+### JavaScript String `trim()` Method Summary
+
+The `trim()` method removes whitespace characters from both ends of a string, returning a new string without modifying the original.
+
+**Syntax**:
+```javascript
+let resultString = str.trim();
+```
+- Whitespace characters include spaces, tabs, and non-breaking spaces.
+
+**Characteristics**:
+- `trim()` does not alter the original string.
+- For removing whitespace from only the beginning or end, use `trimStart()` or `trimEnd()`.
+
+**Example**:
+```javascript
+let str = '  JS trim  ';
+let result = str.trim();
+console.log(result); // Output: "JS trim"
+```
+
+**Summary**:
+- Use `trim()` to remove whitespace from both the start and end of a string.
+
+
+### JavaScript String `trimStart()` Method Summary
+
+The `trimStart()` method removes whitespace characters from the beginning of a string, returning a new string with the leading whitespace removed. It does not modify the original string.
+
+**Syntax**:
+```javascript
+let newString = originalString.trimStart();
+```
+- Whitespace characters include spaces, tabs, carriage returns, new lines, vertical tabs, and form feeds.
+
+**Characteristics**:
+- `trimStart()` does not alter the original string.
+- `trimLeft()` is an alias for `trimStart()` and provides the same functionality.
+
+**Example**:
+```javascript
+const str = '   JavaScript   ';
+const result = str.trimStart();
+
+console.log({ str });    // Output: { str: '   JavaScript   ' }
+console.log({ result }); // Output: { result: 'JavaScript   ' }
+```
+
+**Summary**:
+- Use `trimStart()` to remove whitespace from the beginning of a string. `trimLeft()` can be used interchangeably with `trimStart()`.
+
+
+### JavaScript String `trimEnd()` Method Summary
+
+The `trimEnd()` method removes whitespace characters from the end of a string, returning a new string with the trailing whitespace removed. It does not modify the original string.
+
+**Syntax**:
+```javascript
+let newString = originalString.trimEnd();
+```
+- Whitespace characters include spaces, tabs, carriage returns, new lines, vertical tabs, and form feeds.
+
+**Characteristics**:
+- `trimEnd()` does not alter the original string.
+- `trimRight()` is an alias for `trimEnd()` and offers the same functionality.
+
+**Example**:
+```javascript
+const str = '   JavaScript   ';
+const result = str.trimEnd();
+
+console.log({ str });    // Output: { str: '   JavaScript   ' }
+console.log({ result }); // Output: { result: '   JavaScript' }
+```
+
+**Summary**:
+- Use `trimEnd()` to remove whitespace from the end of a string. `trimRight()` can be used interchangeably with `trimEnd()`.
+
+### Padding a String to a Certain Length with Another String
+
+**Summary**: Learn how to use `padStart()` and `padEnd()` methods to pad a string to a specified length with another string.
+
+**`String.prototype.padStart()`**:
+- Pads the beginning of a string to a certain length.
+- **Syntax**: `string.padStart(padLength [, padString])`
+  - `padLength`: Total length of the resulting string after padding.
+  - `padString` (optional): The string used for padding. Defaults to a space (`' '`). If `padString` is longer than needed, only the left-most part is used.
+
+**Examples**:
+1. Padding with zeros:
+    ```javascript
+    let str = '1234'.padStart(8, '0');
+    console.log(str); // "00001234"
+    ```
+2. Padding with spaces (default padding):
+    ```javascript
+    let str = 'abc'.padStart(5);
+    console.log(str); // "  abc"
+    ```
+
+**`String.prototype.padEnd()`**:
+- Pads the end of a string to a certain length.
+- **Syntax**: `string.padEnd(padLength [, padString])`
+  - `padLength`: Total length of the resulting string after padding.
+  - `padString` (optional): The string used for padding. Defaults to a space (`' '`). If `padString` is longer than needed, only the left-most part is used.
+
+**Examples**:
+1. Padding with spaces (default padding):
+    ```javascript
+    let str = 'abc'.padEnd(5);
+    console.log(str); // "abc  "
+    ```
+2. Padding with asterisks:
+    ```javascript
+    let str = 'abc'.padEnd(5, '*');
+    console.log(str); // "abc**"
+    ```
+3. Padding with a string longer than needed:
+    ```javascript
+    let str = 'abc'.padEnd(5, 'def');
+    console.log(str); // "abcde"
+    ```
+
+**Summary**:
+- `padStart()` pads the beginning of a string.
+- `padEnd()` pads the end of a string.
+- Both methods ensure the final string reaches the specified length and use the provided padding string or a default space if none is provided.
+
+### JavaScript String `split()` Method Summary
+
+**Purpose**: The `split()` method divides a string into an array of substrings based on a specified separator.
+
+**Syntax**:
+```javascript
+string.split([separator, [, limit]]);
+```
+- **separator** (optional): Specifies where to split the string. Can be a string or a regular expression. If omitted or not found, the entire string is returned as a single element.
+- **limit** (optional): An integer that limits the number of substrings in the resulting array. If `limit` is 0, returns an empty array. If `limit` is 1, returns an array with the original string.
+
+**Examples**:
+
+1. **Splitting into Words**:
+   ```javascript
+   let str = 'JavaScript String split()';
+   let substrings = str.split(' ');
+   console.log(substrings); // ["JavaScript", "String", "split()"]
+   ```
+   - Splits the string into an array of words using a space as the separator.
+
+2. **Limiting Number of Substrings**:
+   ```javascript
+   let str = 'JavaScript String split()';
+   let substrings = str.split(' ', 2);
+   console.log(substrings); // ["JavaScript", "String"]
+   ```
+   - Limits the result to the first two substrings.
+
+3. **Using Regular Expressions**:
+   ```javascript
+   let paragraph = 'Good Morning! How are you? This is John. John is my friend.';
+   let sentences = paragraph.split(/[!,?,.]/);
+   console.log(sentences); // ["Good Morning", " How are you", " This is John", " John is my friend", ""]
+   ```
+   - Splits the string based on punctuation marks.
+
+4. **Including Matched Results**:
+   ```javascript
+   let paragraph = 'Good Morning! How are you? This is John. John is my friend.';
+   let sentences = paragraph.split(/([!,?,.])/);
+   console.log(sentences); // ["Good Morning", "!", " How are you", "?", " This is John", ".", " John is my friend", ".", ""]
+   ```
+   - Includes punctuation marks in the resulting array.
+
+**Summary**:
+- Use `split()` to break a string into an array of substrings using a separator.
+- The `limit` parameter controls the number of substrings returned.
+
+
+### JavaScript String `substring()` Method Summary
+
+**Purpose**: The `substring()` method extracts a portion of a string between two specified indexes.
+
+**Syntax**:
+```javascript
+str.substring(startIndex [, endIndex]);
+```
+
+- **`startIndex`**: The index of the first character to include in the substring.
+- **`endIndex`** (optional): The index of the first character to exclude from the substring. If omitted, the substring extends to the end of the string.
+
+**Behavior**:
+- If `startIndex` equals `endIndex`, an empty string is returned.
+- If `startIndex` is greater than `endIndex`, the method swaps them.
+- If `startIndex` or `endIndex` is less than 0 or greater than the string’s length, it is treated as 0 or the string’s length, respectively.
+- If any parameter is `NaN`, it is treated as 0.
+
+**Examples**:
+
+1. **Extracting a Substring from the Beginning**:
+   ```javascript
+   let str = 'JavaScript Substring';
+   let substring = str.substring(0, 10);
+   console.log(substring); // "JavaScript"
+   ```
+
+2. **Extracting a Substring to the End**:
+   ```javascript
+   let str = 'JavaScript Substring';
+   let substring = str.substring(11);
+   console.log(substring); // "Substring"
+   ```
+
+3. **Extracting Domain from an Email**:
+   ```javascript
+   let email = 'john.doe@gmail.com';
+   let domain = email.substring(email.indexOf('@') + 1);
+   console.log(domain); // "gmail.com"
+   ```
+
+**Summary**:
+- Use `substring()` to get a part of a string between specified start and end indexes.
+- If no end index is provided, the substring extends to the end of the string.
+
+### JavaScript String `slice()` Method Summary
+
+**Purpose**: The `slice()` method extracts a portion of a string and returns it as a new substring.
+
+**Syntax**:
+```javascript
+str.slice(start [, end]);
+```
+
+**Parameters**:
+- **`start`**: The zero-based index where extraction begins. If negative, it starts from `str.length + start`.
+- **`end`** (optional): The zero-based index where extraction ends (excluding this index). If negative, it is treated as `str.length + end`. If omitted or greater than the string length, extraction goes to the end of the string.
+
+**Behavior**:
+- If `start` is omitted or not a number, extraction starts from the beginning of the string.
+- If `end` is omitted, extraction extends to the end of the string.
+- If `start` is greater than or equal to the string length, or `end` is before `start`, the result is an empty string.
+
+**Examples**:
+
+1. **Extracting from a Specific Start**:
+   ```javascript
+   const str = 'Hello';
+   const substr = str.slice(3);
+   console.log(substr); // "lo"
+   ```
+
+2. **Using Negative Start**:
+   ```javascript
+   const str = 'Hello';
+   const substr = str.slice(-3);
+   console.log(substr); // "llo"
+   ```
+
+3. **Extracting with Start and End**:
+   ```javascript
+   const str = 'Hello';
+   const substr = str.slice(0, 2);
+   console.log(substr); // "He"
+   ```
+
+4. **Using Negative End**:
+   ```javascript
+   const str = 'Hello';
+   const substr = str.slice(0, -2);
+   console.log(substr); // "Hel"
+   ```
+
+5. **Extracting with Out of Range End**:
+   ```javascript
+   const str = 'Hello';
+   const substr = str.slice(2, 6);
+   console.log(substr); // "llo"
+   ```
+
+6. **Practical Example (Email Local Part)**:
+   ```javascript
+   let email = 'john@example.com';
+   let localPart = email.slice(0, email.indexOf('@'));
+   console.log(localPart); // "john"
+   ```
+
+**Summary**:
+- Use `slice()` to extract a substring from a string between specified start and end indexes.
+
+
+### JavaScript String `concat()` Method Summary
+
+**Purpose**: The `concat()` method combines multiple strings into a single new string.
+
+**Syntax**:
+```javascript
+string.concat(str1, [...strN]);
+```
+
+**Behavior**:
+- **Parameters**: Accepts one or more strings to concatenate.
+- **Non-String Arguments**: Converts non-string arguments to strings before concatenating.
+
+**Recommendations**:
+- For better performance, use the `+` or `+=` operator for string concatenation instead of `concat()`.
+
+**Examples**:
+
+1. **Concatenating Strings**:
+   ```javascript
+   let greeting = 'Hi';
+   let message = greeting.concat(' ', 'John');
+   console.log(message); // "Hi John"
+   ```
+
+2. **Concatenating an Array of Strings**:
+   ```javascript
+   let colors = ['Blue', ' ', 'Green', ' ', 'Teal'];
+   let result = ''.concat(...colors);
+   console.log(result); // "Blue Green Teal"
+   ```
+
+3. **Concatenating Non-String Arguments**:
+   ```javascript
+   let str = ''.concat(1, 2, 3);
+   console.log(str); // "123"
+   ```
+
+**Summary**:
+- The `concat()` method joins a list of strings into one new string.
+- Prefer using `+` or `+=` for string concatenation for better performance.
+
+
+### JavaScript String `repeat()` Method Summary
+
+**Purpose**: The `repeat()` method creates a new string by repeating the original string a specified number of times.
+
+**Syntax**:
+```javascript
+str.repeat(count)
+```
+
+**Parameters**:
+- **count**: An integer specifying the number of times to repeat the string. It must be greater than 0 and less than +Infinity.
+
+**Behavior**:
+- If `count` is `0`, the method returns an empty string.
+- If `count` is negative or +Infinity, the method throws a `RangeError`.
+
+**Examples**:
+
+1. **Basic Usage**:
+   ```javascript
+   let result = '*'.repeat(1);
+   console.log(result); // "*"
+
+   result = '*'.repeat(3);
+   console.log(result); // "***"
+
+   result = '*'.repeat(0);
+   console.log(result); // ""
+   ```
+
+2. **Handling Negative Count**:
+   ```javascript
+   let result = '*'.repeat(-1);
+   // Throws: RangeError: Invalid count value
+   ```
+
+3. **Using with Non-String Objects**:
+   ```javascript
+   const message = {
+     toString() {
+       return 'Hi';
+     },
+   };
+
+   const result = String.prototype.repeat.call(message, 3);
+   console.log(result); // "HiHiHi"
+   ```
+
+**Summary**:
+- Use `repeat()` to repeat a string a specified number of times.
+- The method is versatile and can be applied to objects with a `toString()` method.
+
+
+### JavaScript String `replace()` Method Summary
+
+- **Purpose**: The `replace()` method is used to create a new string by replacing a specified substring with a new one.
+- **Syntax**: `let newStr = str.replace(substr, newSubstr);`
+  - `str`: The original string.
+  - `substr`: The substring to be replaced.
+  - `newSubstr`: The new substring that will replace `substr`.
+
+- **Behavior**:
+  - The method returns a new string and does not modify the original string.
+  - By default, only the first occurrence of the substring is replaced.
+
+- **Example**:
+  ```javascript
+  let str = 'JS will, JS will rock you!';
+  let newStr = str.replace('JS', 'JavaScript');
+  console.log(newStr); // Output: 'JavaScript will, JS will rock you!'
+  ```
+
+- **Replacing All Occurrences**:
+  - Use regular expressions with the global flag (`g`).
+  - **Example**:
+    ```javascript
+    let newStr = str.replace(/JS/g, 'JavaScript');
+    console.log(newStr); // Output: 'JavaScript will, JavaScript will rock you!'
+    ```
+
+- **Case-Insensitive Replacement**:
+  - Use the ignore flag (`i`) in regular expressions.
+  - **Example**:
+    ```javascript
+    let newStr = str.replace(/JS/gi, 'JavaScript');
+    console.log(newStr); // Output: 'JavaScript will, JavaScript will rock you!'
+    ```
+
+- **Using a Replacement Function**:
+  - Pass a function instead of a string as the second argument to dynamically determine the replacement.
+  - **Example**:
+    ```javascript
+    let newStr = str.replace(/apples|bananas/gi, (match) => match.toUpperCase());
+    console.log(newStr); // Output: 'I like to eat, eat, eat APPLES and BANANAS'
+    ```
+
+- **Summary**:
+  - Use `replace()` to substitute a substring with a new one.
+  - For multiple replacements or pattern matching, use regular expressions.
+
+
+  ### JavaScript String `replaceAll()` Method Summary
+
+- **Purpose**: The `replaceAll()` method replaces all occurrences of a substring or pattern in a string with a new string.
+
+- **Syntax**: `String.prototype.replaceAll(pattern, replacement)`
+  - `pattern`: Can be a string or a regular expression (with a global flag `g` if it's a regex).
+  - `replacement`: Can be a string or a callback function that determines the replacement.
+
+- **Behavior**:
+  - Returns a new string with all matches of the pattern replaced.
+  - Does not modify the original string.
+
+- **Callback Function**:
+  - If `replacement` is a function, it receives three arguments:
+    - `match`: The matched substring.
+    - `offset`: The position of the match within the original string.
+    - `str`: The original string.
+
+- **Examples**:
+
+  1. **Simple Replacement**:
+     ```javascript
+     let str = 'JS will, JS will, JS will rock you.';
+     let newStr = str.replaceAll('JS', 'JavaScript');
+     console.log(newStr); // Output: 'JavaScript will, JavaScript will, JavaScript will rock you.'
+     ```
+
+  2. **Using a Callback Function**:
+     ```javascript
+     let str = 'JS will, Js will, js will rock you.';
+     let pattern = /js/gi;
+
+     let newStr = str.replaceAll(pattern, (match, offset, str) => {
+         if (match === 'JS') return 'JavaScript';
+         if (match === 'Js') return 'Javascript';
+         if (match === 'js') return 'javascript';
+         return '';
+     });
+
+     console.log(newStr); // Output: 'JavaScript will, Javascript will, javascript will rock you.'
+     ```
+
+- **Summary**: Use `replaceAll()` to replace every occurrence of a substring or pattern with a new string, providing a straightforward way to perform global replacements.
+
+
+### JavaScript `toUpperCase()` Method Summary
+
+- **Purpose**: The `toUpperCase()` method converts all characters in a string to uppercase and returns a new string.
+
+- **Syntax**: `str.toUpperCase()`
+  - `str`: The original string to be converted.
+
+- **Behavior**:
+  - Returns a new string with all characters in uppercase.
+  - The original string remains unchanged, as strings are immutable.
+
+- **Example**:
+  ```javascript
+  const message = 'Hello';
+  const newMessage = message.toUpperCase();
+  console.log(newMessage); // Output: 'HELLO'
+  ```
+
+- **Handling `null` or `undefined`**:
+  - Calling `toUpperCase()` on `null` or `undefined` throws a `TypeError`.
+  - To avoid errors, use optional chaining:
+    ```javascript
+    console.log(getUserRanking(-1)?.toUpperCase()); // Output: undefined
+    ```
+
+- **Converting Non-Strings**:
+  - You can use `toUpperCase()` on non-string values by using `String.prototype.toUpperCase.call()`:
+    ```javascript
+    const completed = true;
+    const result = String.prototype.toUpperCase.call(completed);
+    console.log(result); // Output: 'TRUE'
+    ```
+
+- **Summary**: Use the `toUpperCase()` method to convert all characters in a string to uppercase.
+
+### JavaScript `toLowerCase()` Method Summary
+
+- **Purpose**: The `toLowerCase()` method converts all characters in a string to lowercase and returns a new string.
+
+- **Syntax**: `str.toLowerCase()`
+  - `str`: The original string to be converted.
+
+- **Behavior**:
+  - Returns a new string with all characters in lowercase.
+  - The original string remains unchanged, as strings are immutable.
+
+- **Example**:
+  ```javascript
+  const message = 'Hi';
+  const newMessage = message.toLowerCase();
+  console.log(newMessage); // Output: 'hi'
+  ```
+
+- **Handling `null` or `undefined`**:
+  - Calling `toLowerCase()` on `null` or `undefined` throws a `TypeError`.
+  - To avoid errors, use optional chaining:
+    ```javascript
+    console.log(findUserById(-1)?.toLowerCase()); // Output: undefined
+    ```
+
+- **Converting Non-Strings**:
+  - You can use `toLowerCase()` on non-string values by using `String.prototype.toLowerCase.call()`:
+    ```javascript
+    const user = {
+      username: 'JOE',
+      toString() {
+        return this.username;
+      },
+    };
+
+    const username = String.prototype.toLowerCase.call(user);
+    console.log(username); // Output: 'joe'
+    ```
+
+- **Summary**: Use the `toLowerCase()` method to convert all characters in a string to lowercase.
