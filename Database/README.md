@@ -137,6 +137,14 @@ count no of students in each city where max marks cross 90;
 select city, count(name) from student
 group by city having max(marks) > 90;
 
+//now we have sell by city and we want total of it so use ROLLUP() in that cases
+
+select city,sum(p_price) from sale group by rollup(city) order by sum(p_price);
+// yeh last column null karke total de dega for more accurate we use this 
+select coalesce(p_name,'total'),
+sum(p_price) from sale group by rollup(p_name) 
+order by sum(total_price);
+
 
 ## general order
 ## select * from tablename where condition group by column having condition order by column asc;
@@ -187,3 +195,58 @@ truncate table student;
 ## sql sub quries 
 ## it contain two sql select statement 
 ## select columns from table where col_name operator (subquery);
+
+## views  it is temprory table 
+## suppose a complex query and you run in sql bar bar then ham us query ko save karke rakhe dege jese har koi us query ko access kar payega okay. it is create a temp view table on server
+## syntax CREATE VIEW view_name AS
+SELECT column1, column2, ...
+FROM table_name
+WHERE condition;
+example :-> create view student_view as select * from student id=32;
+
+## next time we need to fetch data we use directly 
+## like that 
+## select *from student_view;
+## use this to get view list 
+## SHOW FULL TABLES IN practise WHERE TABLE_TYPE = 'VIEW';
+
+
+## stored procedure
+## stored routine:- An sql statement can be stored on database server which can call n no of times
+## two types 1) stored procedure 2) user defined functions
+
+## stored procedure:- set of sql statments and procedural logic that can perform such operation of crud.
+## LETS YOU CREATE UPDATE CUSTOM PROCDEURE
+## create PROCEDURE updateStudent(
+    IN p_id int,
+    IN p_name varchar(100)
+    )
+    BEGIN
+    update student 
+    set name = p_name
+    WHERE id=p_id;
+    END;
+
+## NOW USE CUSTOM procedure of it
+## CALL updateStudent(1, 'AAkash');
+
+## 2) user defined function defined by user to return value to perform their logic
+## mtlb ham jo subquries karte he use ek function me dal do then woh ham us function ko use kar lege bar bar okay
+
+## windows functions also know as analytic function allow you to perform caln across a set of rows related to the current row.
+## defined by an over() clause
+
+select sum(salary) from emplyoee;
+//it return the single value of it 
+select fname ,salary,sum(salary) over (order by salary) from employees
+output is 
+id fname salary sum 
+1  a      5      5 
+2  b      2      7
+
+## benefits of windows functions
+## advanced analytics:- running total ,moving average,rank calcuation and cummulative distributions
+
+## non-ageragete-> they do not collpase row they give more details
+
+## flexibility: they can use in various clauses of sql with select order by having and lots of flexibility in writing quries.
