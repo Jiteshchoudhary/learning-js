@@ -15,7 +15,7 @@ The `Array.prototype.flat()` method, introduced in ES2019, creates a new array w
   - Flattens an array one level deep by default:
     ```javascript
     const numbers = [1, 2, [3, 4, 5]];
-    const flatNumbers = numbers.flat();
+     const flatNumbers = numbers.flat();
     console.log(flatNumbers); // Output: [1, 2, 3, 4, 5]
     ```
 

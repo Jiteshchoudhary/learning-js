@@ -113,7 +113,7 @@ array.toSorted(compareFn);
    ```javascript
    const arrayLike = { length: 3, 0: 5, 2: 4 };
    console.log(Array.prototype.toSorted.call(arrayLike));
-   // Output: [4, 5, undefined]
+   / / Output: [4, 5, undefined]
    ```
 
 5. **On Sparse Arrays:**

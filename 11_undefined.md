@@ -2,7 +2,6 @@
 
 #### What is `undefined`?
 - `undefined` is a primitive type in JavaScript. It is used to represent the absence of a value and is a type with exactly one value: `undefined`.
-
 #### Situations Where `undefined` Occurs
 
 1. **Uninitialized Variables:**
