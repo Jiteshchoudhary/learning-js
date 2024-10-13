@@ -31,3 +31,19 @@ console.log(multiply)
 console.log(multiply(2));
 console.log(multiply(2)(3));
 console.log(multiply(2)(3)(4));
+
+
+
+//create iteraotr using closer okay
+
+function createIterator(fruits) {
+    let index = 0;
+    return function () {
+        return fruits[index++];
+    }
+}
+let fruits = ['apple', 'banana', 'saipo'];
+let iterate = createIterator(fruits);
+console.log(iterate())
+console.log(iterate())
+console.log(iterate())
