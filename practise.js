@@ -154,3 +154,38 @@ console.log(string.indexOf("it"))
 // const nestedArray = [12, [23, [4343, [34]]]];
 // console.log(flattenArray(nestedArray));
 // console.log(flatArray(nestedArray));
+
+//what is closer means nested function where we can access the varaibles
+//value from their outerside yes okay got it sir.
+
+function ageIncrement() {
+    let age = 0;
+    return function () {
+        age++;
+        return age;
+
+    }
+}
+let age = ageIncrement();
+
+console.log(age());
+console.log(age());
+
+
+//what is object proto type here
+
+const human = {
+    age: 21
+}
+
+console.log(Object.getPrototypeOf(human));
+
+
+function hibuddy() {
+    let done = 'i am outside';
+    return function ineer() {
+        console.log(" ia m from inside")
+    }
+}
+
+console.log(hibuddy())
