@@ -363,3 +363,51 @@ This `README.md` serves as a useful guide for understanding key SQL concepts, co
 
 
 
+
+Alias we have two types one is column level and another is table level
+example 
+select name as fname from user;
+
+table name alais are useful in join also
+select * from user as u;
+select u.name,u.age, add.id, add.name from users as u 
+inner join address as add on add.id==u.id;
+
+
+types of operator
+operators are used to perform some operations.
+1) assignment operator  =>  =  
+2) arthirmatic opertor =>  + - / * 
+3)relationoperator =>  >,<,<=,>=,!<,
+4)logical operator-> and or not 
+5)set operator -> union union all
+6) speical operator 
+   postivie operator      negative operator 
+   in                        not in 
+   between                   not between 
+   is null                   is not null
+   like                      not like
+
+
+2) arithmatic operator:- to perfrom some math caln like add, sub,mul,div;
+syntax 
+column name arithmatic operator 
+1) write a query to display employee salaries after adding 1000;
+select salary, salary+100 as result from employee;
+
+2) write a query to update emp salary with an increment of 10% or working with job is analyst
+
+update emp set salary = salary + salary *10/100 where job ="analyst";
+
+//here we can also fetch old column with new add on column
+SELECT *, Price+20 as increasePrice
+FROM Products; 
+
+Relational operators:- 
+   compare a specific column value with even user defined conditions
+
+example:-
+write a query to display list of emp whore are joined before 1981;
+select * from emply where join_date <'1981-01-01';
+
+//lets start with js then move to others also okay

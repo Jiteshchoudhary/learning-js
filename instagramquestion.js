@@ -141,7 +141,7 @@ function isPalindrome(input) {
 }
 
 // Example usage
-console.log(isPalindrome(12321)); // true
+console.log(isPalindrome(12321)); // truev
 console.log(isPalindrome('madam')); // true
 console.log(isPalindrome(12345)); // false
 console.log(isPalindrome('hello')); // false

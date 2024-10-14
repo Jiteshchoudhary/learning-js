@@ -1721,3 +1721,38 @@ console.log(sum(1, 2));  // ?
 
 Explanation: Although arrow functions don’t have their own arguments object, they can still access arguments from the surrounding regular function (sum).
 
+
+
+
+// prototypical inheritance in js we can inherit object properties also 
+
+const animal ={
+  color:function(){
+    return 'Animal color function'
+  }
+}
+
+const dog = Object.create(animal);
+dog['height'] = function(){
+return  "hi iam height methods"
+}
+console.log(dog.color());
+console.log(dog.height());
+
+//polyfills means add backward compatibility 
+//example es6 introduced the include method and previous older version do not have then how we can add using poly fill for backward compatibility purpose okay.
+if(!Array.prototype.includes){
+    Array.prototype.includes = function(value){
+        return this.indexOf(value) !==-1;
+    }
+}
+if (!Array.prototype.includes) {
+  Array.prototype.includes = function(value) {
+    return this.indexOf(value) !== -1;
+  };
+}
+
+// Usage
+const arr = [1, 2, 3];
+console.log(arr.includes(2)); // Output: true
+console.log(arr.includes(4)); // Output: false
