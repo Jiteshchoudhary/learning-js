@@ -42,7 +42,7 @@ Jitesh Choudhary
 1) step go to dns setting of domain and map the domain with ip and test it in browser.
           choose domain type aaa category
 once it will map then hit the url in browser check it is running or not like that
-example https://api.tradible.io=>3.68.92.21 yeh apko bad gateway return karege  aab aap server pe jake ssl setup karlo then it work fine
+example https://api.test.io=>9.68.92.21 yeh apko bad gateway return karege  aab aap server pe jake ssl setup karlo then it work fine
 2) step now go to the server on ec2 instace login
 sudo apt install certbot python3-certbot-nginx
 sudo certbot --nginx -d mydomain.com -d www.mydomain.com  //yeh comand tabhi work karege jab apka domain map hoga ip ke sath apke dns server pe
