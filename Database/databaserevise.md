@@ -411,3 +411,125 @@ write a query to display list of emp whore are joined before 1981;
 select * from emply where join_date <'1981-01-01';
 
 //lets start with js then move to others also okay
+
+
+A **subquery** in MySQL is a query within another query, usually enclosed in parentheses. Subqueries allow you to perform complex queries by embedding one query inside another, typically to retrieve data based on the result of the subquery. The main query is referred to as the **outer query**, and the embedded query is the **subquery** or **inner query**.
+
+### Types of Subqueries in MySQL
+
+Subqueries in MySQL can be classified into several types based on where and how they are used:
+
+1. **Single-row Subquery**
+2. **Multi-row Subquery**
+3. **Scalar Subquery**
+4. **Correlated Subquery**
+5. **Non-correlated Subquery**
+6. **Nested Subquery**
+7. **Inline View Subquery**
+8. **EXISTS Subquery**
+
+Let's explore each of these types in detail:
+
+### 1. **Single-row Subquery**
+A **single-row subquery** returns only one row of results. Typically, it's used with comparison operators such as `=`, `<`, `>`, `<=`, `>=`, or `<>`.
+
+**Example:**
+```sql
+SELECT employee_id, first_name, last_name 
+FROM employees 
+WHERE salary = (SELECT MAX(salary) FROM employees);
+```
+- The subquery `(SELECT MAX(salary) FROM employees)` returns the highest salary, and the outer query finds the employee(s) with that salary.
+
+### 2. **Multi-row Subquery**
+A **multi-row subquery** returns more than one row. These subqueries are used with operators like `IN`, `ANY`, `ALL`.
+
+**Example:**
+```sql
+SELECT employee_id, first_name, last_name 
+FROM employees 
+WHERE department_id IN (SELECT department_id FROM departments WHERE location_id = 1700);
+```
+- The subquery returns all department IDs for a specific location, and the outer query fetches employees from those departments.
+
+### 3. **Scalar Subquery**
+A **scalar subquery** returns a single value (one row and one column). Scalar subqueries can be used in any place where a single value is expected, such as in a `SELECT` clause.
+
+**Example:**
+```sql
+SELECT first_name, last_name, 
+       (SELECT department_name FROM departments WHERE department_id = employees.department_id) AS department_name
+FROM employees;
+```
+- This subquery returns the department name for each employee.
+
+### 4. **Correlated Subquery**
+A **correlated subquery** is a subquery that depends on values from the outer query. The subquery is executed once for every row processed by the outer query.
+
+**Example:**
+```sql
+SELECT e1.first_name, e1.salary 
+FROM employees e1 
+WHERE e1.salary > (SELECT AVG(e2.salary) FROM employees e2 WHERE e1.department_id = e2.department_id);
+```
+- The subquery `(SELECT AVG(e2.salary)...)` uses a value from the outer query (`e1.department_id`), meaning it runs for each employee.
+
+### 5. **Non-correlated Subquery**
+A **non-correlated subquery** is independent of the outer query and runs only once. The result of the subquery is used to evaluate the outer query.
+
+**Example:**
+```sql
+SELECT first_name, last_name 
+FROM employees 
+WHERE salary > (SELECT AVG(salary) FROM employees);
+```
+- The subquery calculates the average salary once, and the outer query compares each employee’s salary against that value.
+
+### 6. **Nested Subquery**
+A **nested subquery** refers to having a subquery inside another subquery. These are used to perform complex queries by breaking them into smaller, manageable steps.
+
+**Example:**
+```sql
+SELECT employee_id, first_name, last_name 
+FROM employees 
+WHERE department_id = (SELECT department_id FROM departments WHERE manager_id = (SELECT employee_id FROM employees WHERE first_name = 'John'));
+```
+- The innermost subquery finds John’s employee ID, the middle subquery finds the department managed by John, and the outer query retrieves employees in that department.
+
+### 7. **Inline View Subquery**
+An **inline view subquery** is used in the `FROM` clause of an SQL statement. The subquery acts as a temporary view that the outer query can then reference.
+
+**Example:**
+```sql
+SELECT department_id, AVG(salary) AS avg_salary 
+FROM (SELECT department_id, salary FROM employees WHERE salary > 5000) AS high_paid_employees
+GROUP BY department_id;
+```
+- The subquery `(SELECT department_id, salary FROM employees WHERE salary > 5000)` creates a "virtual" table of employees with high salaries, and the outer query groups them by department.
+
+### 8. **EXISTS Subquery**
+The **EXISTS** operator checks whether a subquery returns any rows. It returns `TRUE` if the subquery returns one or more rows and `FALSE` otherwise.
+
+**Example:**
+```sql
+SELECT first_name, last_name 
+FROM employees e 
+WHERE EXISTS (SELECT 1 FROM departments d WHERE e.department_id = d.department_id);
+```
+- The subquery checks if the department ID from the employees table exists in the departments table. If it does, the employee is returned.
+
+### Summary of Subquery Types:
+| Subquery Type       | Description                                                                                              |
+|---------------------|----------------------------------------------------------------------------------------------------------|
+| Single-row Subquery | Returns a single row of data and is used with comparison operators.                                       |
+| Multi-row Subquery  | Returns multiple rows and is used with `IN`, `ANY`, `ALL`.                                                |
+| Scalar Subquery     | Returns a single value and is used where a single value is required.                                      |
+| Correlated Subquery | Depends on values from the outer query and is executed multiple times (once per row).                     |
+| Non-correlated Subquery | Independent of the outer query and executed only once.                                                |
+| Nested Subquery     | A subquery within another subquery, useful for complex logic.                                             |
+| Inline View Subquery | Used in the `FROM` clause as a temporary table or view.                                                  |
+| EXISTS Subquery     | Checks whether a subquery returns any rows, used with the `EXISTS` clause.                               |
+
+### Performance Considerations:
+- **Subqueries** can sometimes result in poor performance, especially correlated subqueries that must run for each row of the outer query.
+- Where possible, **joins** (especially `INNER JOIN` and `LEFT JOIN`) are often more efficient than subqueries in terms of performance.

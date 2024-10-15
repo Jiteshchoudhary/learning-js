@@ -12,7 +12,8 @@ function createMemoryLeak() {
 
 // Create a memory leak
 let leakyFunction = createMemoryLeak();
-
+//node --max-old-space-size=4096 your-script.app.js
+//node --max-old-space-size=4096 your-script.js
 // Call the leaky function
 setInterval(() => {
     leakyFunction(); // This keeps the largeArray in memory

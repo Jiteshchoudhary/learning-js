@@ -45,8 +45,8 @@ function stringCompression(string) {
 
 function rotateString(str, n) {
     const index = n % str.length;
-    let leftRotation = str.slice(0, index) + str.slice(index);
-    console.log("left totations @@", leftRotation)
+    // let leftRotation = str.slice(0, index) + str.slice(index);
+    // console.log("left totations @@", leftRotation)
     return str.slice(index) + str.slice(0, index);
 
 }
@@ -71,7 +71,7 @@ function longestSubstringWithoutRepeating(str) {
     let current = '';
 
     for (let char of str) {
-        if (current.includes(char)) {
+        if (.includes(char)) {
             current = current.slice(current.indexOf(char) + 1);
         }
         current += char;
